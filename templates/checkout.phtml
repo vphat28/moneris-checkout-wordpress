@@ -1,0 +1,13 @@
+<?php
+$setting = new \Moneris\Checkout\Helper\Data();
+?>
+<script type="text/javascript">
+    window.MonerisCheckoutConfig = {
+        mode: '<?php echo $setting->getMode(); ?>',
+        base_url: '<?php echo $setting->getBaseUrl(); ?>',
+        ticket: '<?php echo $params['ticket']; ?>',
+        shop_url: '<?php echo $setting->get_shop_url(); ?>',
+        cart_total: '<?php echo $setting->get_cart_total(); ?>',
+    };
+</script>
+<?php wp_nonce_field( 'woocommerce-process_checkout', 'woocommerce-process-checkout-nonce' ); ?>
