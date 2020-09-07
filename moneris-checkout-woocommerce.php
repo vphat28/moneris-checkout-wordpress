@@ -74,7 +74,7 @@ function moneris_checkout_woocommerce_plugin_action_links( $links ) {
 }
 
 function moneris_checkout_woocommerce_dbi_add_plugin_settings_page() {
-	Container::make( 'theme_options', __( 'Moneris Checkout WooCommerce Setting' ) )
+	Container::make( 'theme_options', __( 'Moneris Checkout account details' ) )
 			 ->set_page_parent( 'options-general.php' )
 			 ->add_fields( array(
 				 Field::make( 'text', 'moneris_store_id', 'Store ID' )
@@ -84,7 +84,7 @@ for Moneris. It is the same Store ID that
 you use when you login to the <a href="https://www3.moneris.com/mpg/">Moneris
 Merchant Resource Center.</a>.' )
 					  ->set_attribute( 'maxLength', 32 ),
-				 Field::make( 'text', 'moneris_api_key', 'API key' )
+				 Field::make( 'text', 'moneris_api_key', 'API Token' )
 					  ->set_help_text( 'The API Token is a store-specific string
 of alphanumeric characters. Retrieve
 from <b>Admin > Store Settings</b> in
