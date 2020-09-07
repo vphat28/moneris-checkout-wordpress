@@ -67,7 +67,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'moneris_check
 
 function moneris_checkout_woocommerce_plugin_action_links( $links ) {
 	$plugin_links = array(
-		'<a href="options-general.php?page=crb_carbon_fields_container_moneris_checkout_woocommerce_setting.php">' . esc_html__( 'Settings' ) . '</a>',
+		'<a href="options-general.php?page=crb_carbon_fields_container_moneris_checkout_account_details.php">' . esc_html__( 'Settings' ) . '</a>',
 	);
 
 	return array_merge( $plugin_links, $links );
