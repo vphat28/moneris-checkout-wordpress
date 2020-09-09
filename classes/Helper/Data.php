@@ -36,7 +36,7 @@ class Data
 
     public function log($data)
     {
-        file_put_contents(MONERIS_WC_PLUGIN_DIR . '/log/moneris.log', PHP_EOL . $data . PHP_EOL, FILE_APPEND);
+        file_put_contents(ABSPATH . 'wp-content/uploads/moneris.log', PHP_EOL . $data . PHP_EOL, FILE_APPEND);
     }
 
     public function get_cart_rates()
