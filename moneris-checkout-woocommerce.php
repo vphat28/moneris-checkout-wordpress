@@ -2,6 +2,7 @@
 /*
 Plugin Name: Moneris Checkout WooCommerce Integration
 Plugin URI: https://moneris.com
+Version: 1.0.3
 Description: Moneris Checkout integration for WooCommerce
 */
 
