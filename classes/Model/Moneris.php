@@ -2,10 +2,10 @@
 
 namespace Moneris\Checkout\Model;
 
-include_once MONERIS_WC_PLUGIN_DIR . 'includes/mpgClasses.php';
+include_once MONERIS_WC_PLUGIN_DIR . '/includes/mpgClasses.php';
 
 class Moneris {
-	public static function capture( $amount, $store_id, $api_token, $orderid, $txnnumber, $customer_id = 'Customer ID', $dynamic_descriptor = 'Capture WooCommerce' ) {
+	public static function capture( $amount, $store_id, $api_token, $mode, $orderid, $txnnumber, $customer_id = 'Customer ID', $dynamic_descriptor = 'Capture WooCommerce' ) {
 		$compamount = $amount;
 
 ## step 1) create transaction array ###
@@ -29,10 +29,10 @@ class Moneris {
 ## in step 2
 		$mpgRequest = new \mpgRequest( $mpgTxn );
 		$mpgRequest->setProcCountryCode( "CA" ); //"US" for sending transaction to US environment
-		$mpgRequest->setTestMode( true ); //false or comment out this line for production transactions
+		$mpgRequest->setTestMode( $mode ); //false or comment out this line for production transactions
 
 ## step 4) create mpgHttpsPost object which does an https post ##
-		$mpgHttpPost = new mpgHttpsPost( $store_id, $api_token, $mpgRequest );
+		$mpgHttpPost = new \mpgHttpsPost( $store_id, $api_token, $mpgRequest );
 
 ## step 5) get an mpgResponse object ##
 		$mpgResponse = $mpgHttpPost->getMpgResponse();
@@ -42,7 +42,7 @@ class Moneris {
 		return $mpgResponse;
 	}
 
-	public static function refund( $amount, $store_id, $api_token, $orderid, $txnnumber, $customer_id = 'Customer ID', $dynamic_descriptor = 'refund WooCommerce' ) {
+	public static function refund( $amount, $store_id, $api_token, $mode, $orderid, $txnnumber, $customer_id = 'Customer ID', $dynamic_descriptor = 'refund WooCommerce' ) {
 //		$store_id           = 'store5';
 //		$api_token          = 'yesguy';
 //		$orderid            = 'ord-110515-11:32:49';
@@ -69,7 +69,7 @@ class Moneris {
 ## in step 2
 		$mpgRequest = new \mpgRequest( $mpgTxn );
 		$mpgRequest->setProcCountryCode( "CA" ); //"US" for sending transaction to US environment
-		$mpgRequest->setTestMode( true ); //false or comment out this line for production transactions
+		$mpgRequest->setTestMode( $mode ); //false or comment out this line for production transactions
 
 ## step 4) create mpgHttpsPost object which does an https post ##
 		$mpgHttpPost = new \mpgHttpsPost( $store_id, $api_token, $mpgRequest );

@@ -42,6 +42,12 @@ class Gateway extends \WC_Payment_Gateway {
 	 * @param  int $order_id
 	 */
 	public function capture_payment( $order_id ) {
+		$captured = get_post_meta( $order_id, 'moneris_captured', true);
+
+		if (!empty($captured)) {
+			return;
+		}
+
 		$helper = new Data();
 		$order  = wc_get_order( $order_id );
 		$helper->log( 'Capturing ' . $order_id );
@@ -54,12 +60,15 @@ class Gateway extends \WC_Payment_Gateway {
 			$order_total,
 			$helper->getStoreID(),
 			$helper->getApiToken(),
+			$helper->isTestMode(),
 			$receipt['response']['receipt']['cc']['order_no'],
 			$receipt['response']['receipt']['cc']['transaction_no'],
 			$receipt['response']['receipt']['cc']['cust_id']
 		);
 
-		if ( $mpgResponse->getComplete() ) {
+		if ( $mpgResponse->getComplete() === 'true' ) {
+			add_post_meta( $order_id, 'moneris_captured', true);
+			add_post_meta( $order_id, 'moneris_chare_id', $mpgResponse->getTxnNumber() );
 			$order->add_order_note( sprintf( __( 'Moneris charge complete (Charge ID: %s)' ), $mpgResponse->getTxnNumber() ) );
 
 			if ( is_callable( array( $order, 'save' ) ) ) {
@@ -81,6 +90,7 @@ class Gateway extends \WC_Payment_Gateway {
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		$order  = wc_get_order( $order_id );
+
 		$helper = new Data();
 
 		if ( ! $order ) {
@@ -104,12 +114,13 @@ class Gateway extends \WC_Payment_Gateway {
 			$amount,
 			$helper->getStoreID(),
 			$helper->getApiToken(),
+			$helper->isTestMode(),
 			$receipt['response']['receipt']['cc']['order_no'],
-			$receipt['response']['receipt']['cc']['transaction_no'],
+			get_post_meta( $order_id, 'moneris_chare_id', true ),
 			$receipt['response']['receipt']['cc']['cust_id']
 		);
 
-		if ( $mpgResponse->getComplete() ) {
+		if ( $mpgResponse->getComplete() === 'true' ) {
 			$refund_message = sprintf( __( 'Refunded %1$s - Refund ID: %2$s - Reason: %3$s' ), $amount, $mpgResponse->getTxnNumber(), $reason );
 
 			$order->add_order_note( $refund_message );
@@ -141,7 +152,8 @@ class Gateway extends \WC_Payment_Gateway {
 	/**
 	 * @param int $order_id
 	 *
-	 * @return array
+	 * @return array|void
+	 * @throws \WC_Data_Exception
 	 */
 	public function process_payment( $order_id ) {
 		global $woocommerce;
@@ -160,11 +172,14 @@ class Gateway extends \WC_Payment_Gateway {
 		if ( $quoteId == $receipt['response']['request']['order_no'] ) {
 			$helper->log( 'hash matched ' );
 			wc_add_notice( __( 'Thank you for your order', 'woocommerce' ), 'success' );
-			$order->payment_complete( $receipt['response']['request']['ticket'] );
 
-			if ( isset( $receipt['response']["receipt"]["cc"]["transaction_code"] ) && $receipt['response']["receipt"]["cc"]["transaction_code"] === '00' ) {
+			if ( isset( $receipt['response']["receipt"]["cc"]["transaction_code"] ) && $receipt['response']["receipt"]["cc"]["transaction_code"] !== '00' ) {
 				/* translators: transaction id */
+				$order->set_transaction_id( $receipt['response']['request']['ticket'] );
 				$order->update_status( 'on-hold', sprintf( __( 'Moneris charge authorized (Charge ID: %s). Process order to take payment' ), $receipt['response']["receipt"]["cc"]["transaction_no"] ) );
+			} else {
+				$order->payment_complete( $receipt['response']['request']['ticket'] );
+				add_post_meta( $order_id, 'moneris_chare_id', $receipt['response']["receipt"]["cc"]["transaction_no"] );
 			}
 //			$order->set_status()
 		} else {
