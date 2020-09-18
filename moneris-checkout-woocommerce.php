@@ -3,7 +3,7 @@
  * Plugin Name: Moneris Checkout WooCommerce Integration
  * Plugin URI: https://moneris.com
  * Description: Moneris Checkout integration for WooCommerce
- * Version: 1.0.4
+ * Version: 1.0.5
 */
 
 use Carbon_Fields\Container;
