@@ -105,6 +105,9 @@ Merchant Resource Center.</a>.' )
 transactions, and to control if those
 transactions are processed.' )
 					  ->set_option_value( 'yes' ),
+				 Field::make( 'checkbox', 'moneris_checkout_shipping_mode', __( 'Enable Shipping' ) )
+					  ->set_help_text( 'Enable Shipping rates on Moneris Checkout. Rates will be recalculated on new address change' )
+					  ->set_option_value( 'yes' ),
 			 ) );
 }
 

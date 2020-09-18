@@ -2,6 +2,8 @@
 
 namespace Moneris\Checkout;
 
+use Moneris\Checkout\Helper\Data;
+
 class Bootstrap
 {
     public function init()
@@ -23,9 +25,9 @@ class Bootstrap
 
     public function check_needs_shipping($needs_shipping)
     {
-		  $methods = WC()->shipping()->get_packages();
-
-		  if (count($methods) < 1) {
+		  $helper = new Data();
+		  
+		  if (!$helper->isShippingMode()) {
 		    return false;
       }
 

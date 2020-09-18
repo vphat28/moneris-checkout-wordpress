@@ -29,6 +29,11 @@ class Data
         return get_option('_moneris_checkout_test_mode') == 'yes' ? true : false;
     }
 
+    public function isShippingMode()
+    {
+        return get_option('_moneris_checkout_shipping_mode') == 'yes' ? true : false;
+    }
+
     public function getBaseUrl()
     {
         return trim(home_url(), '/');

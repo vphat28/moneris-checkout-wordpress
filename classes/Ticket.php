@@ -58,23 +58,25 @@ class Ticket
         $requestData->dynamic_descripto = "dyndesc";
         $requestData->cart = new \stdClass;
         $requestData->cart->items = [];
-        $rates = $this->data->get_cart_rates();
+        if ($this->data->isShippingMode()) {
+			$rates = $this->data->get_cart_rates();
 
-        if (!empty($rates)) {
-			$requestData->shipping_rates = [];
+			if ( ! empty( $rates ) ) {
+				$requestData->shipping_rates = [];
 
-			foreach ($rates as $rate) {
-				/** @var \WC_Shipping_Rate $rate */
-				$newRate = new \stdClass();
+				foreach ( $rates as $rate ) {
+					/** @var \WC_Shipping_Rate $rate */
+					$newRate = new \stdClass();
 
-				$newRate->code = $rate->get_id();
-				$newRate->description = $rate->get_label();
-				$newRate->date = " ";
-				$newRate->amount = $rate->get_cost();
-				$newRate->txn_taxes = $this->formatPrice($this->data->get_cart_tax());
-				$newRate->txn_total = $this->formatPrice($this->data->get_cart_total() + $rate->get_cost());
-				$newRate->default_rate = "false";
-				$requestData->shipping_rates[] = $newRate;
+					$newRate->code                 = $rate->get_id();
+					$newRate->description          = $rate->get_label();
+					$newRate->date                 = " ";
+					$newRate->amount               = $rate->get_cost();
+					$newRate->txn_taxes            = $this->formatPrice( $this->data->get_cart_tax() );
+					$newRate->txn_total            = $this->formatPrice( $this->data->get_cart_total() + $rate->get_cost() );
+					$newRate->default_rate         = "false";
+					$requestData->shipping_rates[] = $newRate;
+				}
 			}
 		}
 

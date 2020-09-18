@@ -48,6 +48,11 @@ class Api
     private function shipping_rates()
     {
         $helper = new Helper\Data();
+
+        if (!$helper->isShippingMode()) {
+			echo wp_json_encode([]); return;
+		}
+
         $input = json_decode(file_get_contents('php://input'), true);
         $inputAddress = $input['address'];
         $address = array();
