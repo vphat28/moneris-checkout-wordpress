@@ -8,6 +8,7 @@ use Moneris\Checkout\Helper\Data;
 class Ticket
 {
     const PREREQUEST_ENDPOINT = 'https://gatewayt.moneris.com/chkt/request/request.php';
+    const PREREQUEST_ENDPOINT_PROD = 'https://gateway.moneris.com/chkt/request/request.php';
 
     /** @var Data */
     private $data;
@@ -17,9 +18,13 @@ class Ticket
         $this->data = new Data();
     }
 
-    public function getEndpoint()
+    public function getEndpoint($test = true)
     {
-        return self::PREREQUEST_ENDPOINT;
+    	if ($test) {
+			return self::PREREQUEST_ENDPOINT;
+		} else {
+    		return self::PREREQUEST_ENDPOINT_PROD;
+		}
     }
 
     private function formatPrice($number)
@@ -53,17 +58,25 @@ class Ticket
         $requestData->dynamic_descripto = "dyndesc";
         $requestData->cart = new \stdClass;
         $requestData->cart->items = [];
-        $requestData->shipping_rates = [];
-		$newRate = new \stdClass();
+        $rates = $this->data->get_cart_rates();
 
-		$newRate->code = "code01";
-		$newRate->description = "Standard";
-		$newRate->date = "3 days";
-		$newRate->amount = "$10";
-		$newRate->txn_taxes = "1.00";
-		$newRate->txn_total = "10.00";
-		$newRate->default_rate = "false";
-		$requestData->shipping_rates[] = $newRate;
+        if (!empty($rates)) {
+			$requestData->shipping_rates = [];
+
+			foreach ($rates as $rate) {
+				/** @var \WC_Shipping_Rate $rate */
+				$newRate = new \stdClass();
+
+				$newRate->code = $rate->get_id();
+				$newRate->description = $rate->get_label();
+				$newRate->date = " ";
+				$newRate->amount = $rate->get_cost();
+				$newRate->txn_taxes = $this->formatPrice($this->data->get_cart_tax());
+				$newRate->txn_total = $this->formatPrice($this->data->get_cart_total() + $rate->get_cost());
+				$newRate->default_rate = "false";
+				$requestData->shipping_rates[] = $newRate;
+			}
+		}
 
         $quoteItems = $woocommerce->cart->get_cart_contents();
 
@@ -90,15 +103,16 @@ class Ticket
 
         $this->data->log(json_encode($requestData));
 
-        $response = $client->post($url,
+		$response = $client->post($url,
             ['body' => json_encode(
                 $requestData
             )]
         );
 
-        $body = json_decode($response->getBody()->getContents(), true);
+		$body_content = $response->getBody()->getContents();
+		$body = json_decode($body_content, true);
 
-        if ($body['response']['success'] === "true") {
+		if ($body['response']['success'] === "true") {
             return [
                 'ticket' => $body['response']['ticket'],
                 'quote_id' => $requestData->order_no,
@@ -110,7 +124,7 @@ class Ticket
 
     public function getReceiptData($ticket)
     {
-        $url = $this->getEndpoint();
+        $url = $this->getEndpoint($this->data->getMode());
 
         /** @var Client $client */
         $client = new Client([

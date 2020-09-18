@@ -14,10 +14,22 @@ class Bootstrap
 
         $gateway = new \Moneris\Checkout\Gateway();
         add_filter('woocommerce_payment_gateways', [$gateway, 'add_moneris_checkout_method']);
+        add_filter('woocommerce_cart_needs_shipping', [$this, 'check_needs_shipping']);
         add_action('carbon_fields_container_moneris_checkout_account_details_before_fields', [$this, 'add_moneris_checkout_introduction']);
 
 
         add_shortcode( 'moneris_checkout_woocommerce', 'moneris_checkout_woocommerce_add_shortcode_callback');
+    }
+
+    public function check_needs_shipping($needs_shipping)
+    {
+		  $methods = WC()->shipping()->get_packages();
+
+		  if (count($methods) < 1) {
+		    return false;
+      }
+
+      return $needs_shipping;
     }
 
     public function check_end_point()

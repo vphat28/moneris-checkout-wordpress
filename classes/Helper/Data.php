@@ -58,7 +58,14 @@ class Data
 
     public function get_cart_total()
     {
-        $total = WC()->cart->get_total(false);
+        $total = WC()->cart->get_subtotal();
+
+        return !empty($total) ? $total : 0;
+    }
+
+    public function get_cart_tax()
+    {
+        $total = WC()->cart->get_total_tax();
 
         return !empty($total) ? $total : 0;
     }

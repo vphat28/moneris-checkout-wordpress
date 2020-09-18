@@ -101,8 +101,6 @@ class Api
             WC()->customer->set_calculated_shipping( true );
             WC()->customer->save();
 
-            wc_add_notice( __( 'Shipping costs updated.', 'woocommerce' ), 'notice' );
-
             do_action( 'woocommerce_calculated_shipping' );
 
         } catch ( \Exception $e ) {

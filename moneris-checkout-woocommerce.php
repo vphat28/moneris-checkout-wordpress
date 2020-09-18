@@ -46,6 +46,7 @@ function moneris_checkout_woocommerce_add_shortcode_callback( $atts ) {
 }
 
 function moneris_checkout_frontend_script() {
+	if (!is_checkout()) return;
 	wp_enqueue_script( 'moneris-checkout-wc-script', plugin_dir_url( __FILE__ ) . 'js/moneris-checkout.js', array( 'jquery' ), '1.0.0', true );
 }
 
