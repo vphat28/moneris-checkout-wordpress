@@ -224,10 +224,7 @@ window.MonerisCheckoutWC = {
 			},
 			type: 'post',
 		} ).done( function ( returnData ) {
-			if ( returnData.result == "success" ) {
-				window.location.href = window.MonerisCheckoutConfig.shop_url;
-				;
-			}
+			window.location.href = window.MonerisCheckoutConfig.shop_url;
 		} ).fail( function () {
 			console.log( 'can not make order' );
 		} );
