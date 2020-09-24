@@ -170,7 +170,9 @@ class Gateway extends \WC_Payment_Gateway {
 		$helper->log( 'receipt for order id ' . $order_id . ' _ ' . json_encode( $receipt ) );
 		$helper->log( 'approve id ' . $receipt["response"]["receipt"]["cc"]["transaction_code"] );
 
-		if ( $receipt["response"]["receipt"]["cc"]["transaction_code"] === 'null' ) {
+		if ( !isset($receipt["response"]["receipt"]["cc"]["transaction_code"])  ||
+             $receipt["response"]["receipt"]["cc"]["transaction_code"] === 'null'
+        ) {
             wc_add_notice( __( 'Payment error', 'woocommerce' ), 'error' );
 
             return;
