@@ -169,7 +169,9 @@ class Gateway extends \WC_Payment_Gateway {
 		$helper->log( 'order_id moneris ' . $receipt['response']['request']['order_no'] );
 		$helper->log( 'receipt for order id ' . $order_id . ' _ ' . json_encode( $receipt ) );
 
-		if ( $receipt['response']["receipt"]["cc"]["transaction_no"] === 'null' ) {
+        if ( !isset($receipt["response"]["receipt"]["cc"]["transaction_code"])  ||
+             $receipt["response"]["receipt"]["cc"]["transaction_code"] === 'null'
+        ) {
             wc_add_notice( __( 'Payment error', 'woocommerce' ), 'error' );
 
             return;
