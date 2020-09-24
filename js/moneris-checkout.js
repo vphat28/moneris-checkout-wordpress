@@ -165,7 +165,7 @@ window.MonerisCheckoutWC = {
 		$( 'body' ).append( '<div id="monerisCheckout" style="z-index: 9999"></div>' );
 
 		if ( window.MonerisCheckoutConfig.mode == 'qa' ) {
-			var url = "https://gatewayt.moneris.com/chkt/js/chkt_v1.00.js";
+			var url = "https://gatewaydev.moneris.com/chkt/js/chkt_v1.00.js";
 		} else {
 			var url = "https://gateway.moneris.com/chkt/js/chkt_v1.00.js";
 		}
