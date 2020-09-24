@@ -7,7 +7,7 @@ use Moneris\Checkout\Helper\Data;
 
 class Ticket
 {
-    const PREREQUEST_ENDPOINT = 'https://gatewaydev.moneris.com/chkt/request/request.php';
+    const PREREQUEST_ENDPOINT = 'https://gatewayt.moneris.com/chkt/request/request.php';
     const PREREQUEST_ENDPOINT_PROD = 'https://gateway.moneris.com/chkt/request/request.php';
 
     /** @var Data */
