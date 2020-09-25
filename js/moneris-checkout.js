@@ -112,6 +112,15 @@ window.MonerisCheckoutWC = {
 							'txn_taxes': 0,
 							'txn_total': window.MonerisCheckoutConfig.cart_total + result[ i ][ 'cost' ],
 						} );
+
+						console.log({
+                            'code': result[ i ][ 'code' ],
+                            'description': result[ i ][ 'label' ],
+                            'date': result[ i ][ 'label' ],
+                            'amount': result[ i ][ 'cost' ],
+                            'txn_taxes': 0,
+                            'txn_total': window.MonerisCheckoutConfig.cart_total + result[ i ][ 'cost' ],
+                        });
 					}
 
 					rates[ "data" ] = shippingOptions;
